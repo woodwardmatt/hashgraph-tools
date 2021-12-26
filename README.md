@@ -4,8 +4,8 @@ An example of the transaction required to update an account's mnemonic phrase, a
 
 ## Requirements
 The following will be required:
-- You will need an operator account to pay for the update transaction (account ID and private key)
-- You will need the account details of the account to update (account ID and private key)
+- You will need an operator account to pay for the update transaction (account ID and private key) - *update the .env file with this info*
+- You will need the account details of the account to update (account ID and private key) - *update the .env file with this info*
 - This code runs under Node JS (and has the "npm start" script command already configured)
 
 ## Notes
