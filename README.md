@@ -13,6 +13,7 @@ The following are worth noting:
 - This process requires the update transaction to be signed by both the operator account and the account being updated.
 - The new credentials are currently logged to the console only. (You need to save / capture these for your reference, you will not be able to retrieve them again!)
 - The new keys are derived from a new generated mnemonic phrase to ensure the phrase and keys remain in sync.
+- Large parts of this code were derived directly from the Hedera Developer Docs & Samples.
 
 ## Testing
 The following scenarios have been tested: 
@@ -26,3 +27,10 @@ The following scenarios have been tested:
 The following improvements could be included in future: 
 - More defensive coding around operations / variables
 - Try catch Exception blocks with logging around operations
+
+## References: 
+The following materials were referenced / used in creating this code: 
+- https://docs.hedera.com/guides/docs/sdks
+- https://docs.hedera.com/guides/docs/sdks/keys/generate-a-mnemonic-phrase
+- https://docs.hedera.com/guides/docs/sdks/keys/recover-keys-from-a-mnemonic-phrase
+- https://docs.hedera.com/guides/docs/sdks/cryptocurrency/update-an-account
