@@ -21,3 +21,8 @@ The following scenarios have been tested:
   - An empty account
   - An account with positive hbar balance
   - An account with positive hbar balance and an NFT (one only)
+
+## Improvements
+The following improvements could be included in future: 
+- More defensive coding around operations / variables
+- Try catch Exception blocks with logging around operations
