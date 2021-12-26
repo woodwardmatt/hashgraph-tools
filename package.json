@@ -1,0 +1,13 @@
+{
+  "name": "hashgraph-tools",
+  "version": "0.1",
+  "description": "",
+  "main": "index.js",  
+  "dependencies": {
+    "@hashgraph/sdk": "^2.0.24",
+    "dotenv": "^10.0.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
