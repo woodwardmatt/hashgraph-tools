@@ -39,3 +39,10 @@ The following materials were referenced / used in creating this code:
 - https://docs.hedera.com/guides/docs/sdks/keys/generate-a-mnemonic-phrase
 - https://docs.hedera.com/guides/docs/sdks/keys/recover-keys-from-a-mnemonic-phrase
 - https://docs.hedera.com/guides/docs/sdks/cryptocurrency/update-an-account
+
+## Disclaimer
+The following disclaimers are noted: 
+- Use of this code is at your own risk.
+- No warranty is implied in the sharing of this code.
+- No liability is assumed in the sharing of this code.
+- This code has been created for a development environment use-case only (i.e. not for production grade applications). 
