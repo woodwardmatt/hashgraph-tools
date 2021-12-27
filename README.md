@@ -1,6 +1,6 @@
 # hashgraph-tools
-
-An example of the transaction required to update an account's mnemonic phrase, and derived private & public keys.
+The following are currently included: 
+- An example of the transaction required to update an account's mnemonic phrase, and derived private & public keys.
 
 ## Requirements
 The following will be required:
@@ -22,6 +22,11 @@ The following scenarios have been tested:
   - An empty account
   - An account with positive hbar balance
   - An account with positive hbar balance and an NFT (one only)
+  - (**Not Tested**) An account with positive hbar balance and multiple NFTs
+
+## Assumptions
+The following assumptions are awaiting confirmation: 
+- Multiple NFTs held in an account will not be affected by a key change (awaiting input from an Hedera Developer Advocate)
 
 ## Improvements
 The following improvements could be included in future: 
