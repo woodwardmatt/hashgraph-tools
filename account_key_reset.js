@@ -4,11 +4,19 @@ const{Client, AccountId, PrivateKey, AccountUpdateTransaction, Hbar, Mnemonic} =
 
 async function main(){
 
-    //Configure Client (based on Operator Account)
-    const operatorKey = PrivateKey.fromString(process.env.OPERATOR_KEY);
-    const operatorId = AccountId.fromString(process.env.OPERATOR_ID);
-    let client = Client.forMainnet();
-    client.setOperator(operatorId, operatorKey);
+    //SETUP SDK CLIENT
+    let client;
+
+    try {
+        client = Client.forName(process.env.HEDERA_NETWORK).setOperator(
+            AccountId.fromString(process.env.OPERATOR_ID),
+            PrivateKey.fromString(process.env.OPERATOR_KEY)
+        );
+    } catch {
+        throw new Error(
+            "Environment variables HEDERA_NETWORK, OPERATOR_ID, and OPERATOR_KEY are required." + '\n'
+        );
+    }
 
     //Set the max transaction fee the client is willing to pay to 2 hbars
     client.setMaxTransactionFee(new Hbar(2));

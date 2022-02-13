@@ -2,12 +2,13 @@
   "name": "hashgraph-tools",
   "version": "0.1",
   "description": "",
-  "main": "index.js",  
+  "main": "mint.js",
   "dependencies": {
     "@hashgraph/sdk": "^2.0.24",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "nft.storage": "^5.2.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node mint.js"
   }
 }
