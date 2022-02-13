@@ -1,6 +1,7 @@
 # hashgraph-tools
 The following are currently included: 
-- An example of the transaction required to update an account's mnemonic phrase, and derived private & public keys.
+- (account_key_reset.js) An example of the transaction required to update an account's mnemonic phrase, and derived private & public keys.
+- (mint.js) An example of the transactions required to mint NFTs underneath a parent Token ID (i.e. collection) - More info coming....(bear with me)
 
 ## Requirements
 The following will be required:
