@@ -27,7 +27,7 @@ The following scenarios have been tested:
 
 ## Assumptions
 The following assumptions are awaiting confirmation: 
-- Multiple NFTs held in an account will not be affected by a key change (awaiting input from an Hedera Developer Advocate)
+- Multiple NFTs held in an account will not be affected by a key change (input from Hedera Developer Advocates / Engineers suggests this will be fine)
 
 ## Improvements
 The following improvements could be included in future: 
