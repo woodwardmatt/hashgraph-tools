@@ -4,7 +4,7 @@
   "description": "",
   "main": "mint.js",
   "dependencies": {
-    "@hashgraph/sdk": "^2.0.24",
+    "@hashgraph/sdk": "^2.6.0",
     "dotenv": "^10.0.0",
     "nft.storage": "^5.2.0"
   },
