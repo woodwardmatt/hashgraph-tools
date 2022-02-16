@@ -38,7 +38,7 @@ const nfts = [
                 // {
                 //     name: '<Token Name>',
                 //     description: '<Human readable description of the asset>',
-                //     image: '<CID or path to the image file, if non-image, then preview image>',
+                //     image: '<Put your local file name here e.g. test-2.png>',
                 //     type: '<Mime-type of the file - e.g. image/png>'                    
                 // }
             ];
