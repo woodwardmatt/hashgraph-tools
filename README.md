@@ -12,3 +12,6 @@ The following disclaimers are noted:
 - No warranty is implied in the sharing of this code.
 - No liability is assumed in the sharing of this code.
 - This code has been created for a development environment use-case only (i.e. not for production grade applications). 
+
+## Donations
+If you've found these scripts useful and you'd like to donate to support my work, please send your donation to Hedera Account ID: 0.0.508156
