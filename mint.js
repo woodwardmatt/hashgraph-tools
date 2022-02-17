@@ -33,13 +33,15 @@ const nfts = [
                     name: 'A second test token name',
                     description: 'A second test description to verify metadata structure and usage.',
                     image: 'test-2.png',
-                    type: 'image/png'
+                    type: 'image/png',
+                    properties:{"characteristics":[{"nose-length": 17},{"smile-width": 87}],"abilities":["NFT Maker","NFT Collector","NFT Eater"]}
                 },                
                 // {
                 //     name: '<Token Name>',
                 //     description: '<Human readable description of the asset>',
                 //     image: '<Put your local file name here e.g. test-2.png>',
-                //     type: '<Mime-type of the file - e.g. image/png>'                    
+                //     type: '<Mime-type of the file - e.g. image/png>',
+                //     properties: {} or {//arbitrary json objects / arrays / strings / integers}                  
                 // }
             ];
 
@@ -128,11 +130,22 @@ async function createCustomFee(royalty, fallback, accountId){
 
     try {
 
-        return await new CustomRoyaltyFee()
-        .setNumerator(royalty)
-        .setDenominator(100)
-        .setFeeCollectorAccountId(AccountId.fromString(accountId))
-        .setFallbackFee(new CustomFixedFee().setHbarAmount(new Hbar(fallback)));
+        // VERIFY IF WE ARE APPLYING A FALLBACK FEE
+        if(fallback > 0){
+
+            return await new CustomRoyaltyFee()
+            .setNumerator(royalty)
+            .setDenominator(100)
+            .setFeeCollectorAccountId(AccountId.fromString(accountId))
+            .setFallbackFee(new CustomFixedFee().setHbarAmount(new Hbar(fallback)));
+
+        }else{
+
+            return await new CustomRoyaltyFee()
+            .setNumerator(royalty)
+            .setDenominator(100)
+            .setFeeCollectorAccountId(AccountId.fromString(accountId))
+        }
 
     } catch (error) {
         throw new Error(
@@ -239,7 +252,8 @@ async function storeNFTAssets(nft){
           nft.image,
           { type: nft.type }
         ),
-        type: nft.type,     
+        type: nft.type,
+        properties: nft.properties
       })
 
       //console.log(metadata.ipnft)
