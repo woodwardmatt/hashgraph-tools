@@ -34,14 +34,16 @@ const nfts = [
                     description: 'A second test description to verify metadata structure and usage.',
                     image: 'test-2.png',
                     type: 'image/png',
-                    properties:{"characteristics":[{"nose-length": 17},{"smile-width": 87}],"abilities":["NFT Maker","NFT Collector","NFT Eater"]}
+                    properties:{"edition":{"set": 1,"drop": 1,"pack": 1}},
+                    attributes:[{"trait_type": "smileType", "value": "largeGrin"},{"trait_type": "smileColor", "value": "yellow"}],
                 },                
                 // {
                 //     name: '<Token Name>',
                 //     description: '<Human readable description of the asset>',
                 //     image: '<Put your local file name here e.g. test-2.png>',
                 //     type: '<Mime-type of the file - e.g. image/png>',
-                //     properties: {} or {//arbitrary json objects / arrays / strings / integers}                  
+                //     properties: {} or {//arbitrary json objects / arrays / strings / integers}      
+                //     attributes: {} or {//arbitrary json objects / arrays / strings / integers} 
                 // }
             ];
 
@@ -253,7 +255,8 @@ async function storeNFTAssets(nft){
           { type: nft.type }
         ),
         type: nft.type,
-        properties: nft.properties
+        properties: nft.properties,
+        attributes: nft.attributes,
       })
 
       //console.log(metadata.ipnft)
