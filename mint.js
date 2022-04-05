@@ -1,7 +1,7 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
 import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
-import { NFTStorage, File } from "nft.storage";
+import { NFTStorage, File, Blob } from "nft.storage";
 import fs from "fs";
 
 // Configure NFT.Storage client
@@ -25,15 +25,42 @@ const maxCollectionSupply = 10000;
 //Define supply per NFT - Set this to the number of copies per NFT required
 const supply = 1;
 
-// Setup metadata for NFTs here
+// Setup metadata for NFTs here - This is for reference by the script only. 
+// Note: 
+// - "Additional" files, beyond the preview image, for each NFT should be uploaded to IPFS in advance and referenced here. (Future updates may remove this need.)
+// - Metadata entries for additional files are optional
+// - The opensea metadata format is currently used when the metadata is built (to allow for traits).
 const nfts = [
                 {
-                    name: 'A second test token name',
-                    description: 'A second test description to verify metadata structure and usage.',
+                    name: 'A test token name',
+                    description: 'A test description to verify metadata structure and usage.',
                     image: 'test-2.png',
                     type: 'image/png',
-                    properties:{"edition":{"set": 1,"drop": 1,"pack": 1}},
-                    attributes:[{"trait_type": "smileType", "value": "largeGrin"},{"trait_type": "smileColor", "value": "yellow"}],
+                    properties:{
+                        "edition":{"set": 1,"drop": 1,"pack": 1},
+                        "files": [
+                            {
+                                "uri": "ipfs://bafkreic2mckm33lthlx7umwz3tc5i7neej3poiudit7ulp3s3jyyjrpmwu",
+                                "type": "image/png",
+                                "metadata": "ipfs://bafyreiexxkrytldqr3vaxrotsh5u37glm3q4mthdpcnstrbq7utigkfrse/metadata.json" //Optional
+                            },
+                            {
+                                "uri": "ipfs://bafkreic2mckm33lthlx7umwz3tc5i7neej3poiudit7ulp3s3jyyjrpmwu",
+                                "type": "image/png",
+                                "metadata": "ipfs://bafyreiexxkrytldqr3vaxrotsh5u37glm3q4mthdpcnstrbq7utigkfrse/metadata.json" //Optional
+                            }                            
+                        ]
+                    },
+                    attributes:[
+                        {
+                            "trait_type": "smileType", 
+                            "value": "largeGrin"
+                        },
+                        {
+                            "trait_type": "smileColor", 
+                            "value": "yellow"
+                        }
+                    ],
                 },                
                 // {
                 //     name: '<Token Name>',
@@ -232,24 +259,34 @@ async function createNFTCollection(client, nftCustomFees){
 // FOR UPLOADING MEDIA TO IPFS (VIA NFT.STORAGE)
 async function storeNFTAssets(nft){
 
-    const metadata = await storageclient.store({
-        name: nft.name,
-        description: nft.description,
-        creator: creator,        
-        image: new File(
-          [await fs.promises.readFile(mediaPath + nft.image)],
-          nft.image,
-          { type: nft.type }
-        ),
-        type: nft.type,
-        properties: nft.properties,
-        attributes: nft.attributes,
-      })
+    //Get Root File details
+    const rootFile  = await fs.promises.readFile(mediaPath + nft.image);
+    const rootFileCid = await storageclient.storeBlob(new Blob([rootFile]));
+    const rootFileUrl = "ipfs://" + rootFileCid;
 
-      //console.log(metadata.ipnft)
-      console.log('IPFS URL for the metadata:' + metadata.url + '\n');
+    //Build Metadata - Ref - HIP 412: https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-412.md
+    const metadataObj = {
+        "name": nft.name,
+        "creator": creator,        
+        "description": nft.description,
+        "image": rootFileUrl,
+        "type": nft.type,
+        "properties" : nft.properties,
+        "attributes" : nft.attributes,
+        "format": "opensea"
+    }
 
-      return metadata;
+    //Convert to Json
+    const metadataJsn = JSON.stringify(metadataObj);  
+    
+    //Get Meta Data Url
+    const metadataBlob = new Blob([metadataJsn], { type: 'application/json' });
+    const metadataCid = await storageclient.storeBlob(metadataBlob);
+    const metadataUrl = "ipfs://" + metadataCid;     
+
+    console.log('IPFS URL for the metadata:' + metadataUrl + '\n');
+
+    return metadataUrl;
 }
 
 // CREATE NFTF DEFINED (AT THE TOP OF THE SCRIPT)
@@ -302,7 +339,7 @@ async function mintToken(metadata, client, tokenId) {
 
         let mintTx = await new TokenMintTransaction()
         .setTokenId(tokenId)
-        .setMetadata([Buffer.from(metadata.url)])
+        .setMetadata([Buffer.from(metadata)])
         .freezeWith(client);
     
         let mintTxSign = await mintTx.sign(PrivateKey.fromString(process.env.OPERATOR_KEY));
