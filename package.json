@@ -3,12 +3,13 @@
   "version": "0.1",
   "description": "",
   "main": "mint.js",
+  "type": "module",
   "dependencies": {
     "@hashgraph/sdk": "^2.6.0",
     "dotenv": "^10.0.0",
     "nft.storage": "^5.2.0"
   },
   "scripts": {
-    "start": "node mint.js"
+    "start": "node -r dotenv/config mint.js"
   }
 }

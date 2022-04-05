@@ -1,10 +1,8 @@
-// Read Environmental variables from .env file
-require("dotenv").config();
-
 // Import classes etc.
-const {Client, AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery} = require("@hashgraph/sdk");
-const {NFTStorage, File} = require("nft.storage");
-const fs = require("fs");
+import { Connection } from "./modules/connection.js";
+import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
+import { NFTStorage, File } from "nft.storage";
+import fs from "fs";
 
 // Configure NFT.Storage client
 const storageclient = new NFTStorage({ token: process.env.STORAGE_KEY });
@@ -78,19 +76,8 @@ async function asyncForEach(array, callback) {
 // Entry point for script execution
 async function main(){
 
-    //SETUP SDK CLIENT
-    let client;
-
-    try {
-        client = Client.forName(process.env.HEDERA_NETWORK).setOperator(
-            AccountId.fromString(process.env.OPERATOR_ID),
-            PrivateKey.fromString(process.env.OPERATOR_KEY)
-        );
-    } catch {
-        throw new Error(
-            "Environment variables HEDERA_NETWORK, OPERATOR_ID, and OPERATOR_KEY are required." + '\n'
-        );
-    }
+    // SETUP CLIENTS 
+    let client = new Connection().client;
 
     // SETUP ARRAY FOR CUSTOM FEES
     let nftCustomFees = await addCustomFees();
@@ -283,7 +270,7 @@ async function createNFTs(client, collectionId){
                 for (let index = 0; index < supply; index++) {
 
                     // MINT TOKEN USING METADATA & COLLECTION ID
-                    tokenReceipt = await mintToken(metadata, client, collectionId);
+                    let tokenReceipt = await mintToken(metadata, client, collectionId);
                 }  
             })
 
@@ -313,7 +300,7 @@ async function mintToken(metadata, client, tokenId) {
 
     try {
 
-        mintTx = await new TokenMintTransaction()
+        let mintTx = await new TokenMintTransaction()
         .setTokenId(tokenId)
         .setMetadata([Buffer.from(metadata.url)])
         .freezeWith(client);

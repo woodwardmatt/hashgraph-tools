@@ -1,22 +1,11 @@
-require("dotenv").config();
-
-const{Client, AccountId, PrivateKey, AccountUpdateTransaction, Hbar, Mnemonic} = require("@hashgraph/sdk");
+// Import classes etc.
+import { Connection } from "./modules/connection.js";
+import { AccountId, PrivateKey, AccountUpdateTransaction, Hbar, Mnemonic } from "@hashgraph/sdk";
 
 async function main(){
 
-    //SETUP SDK CLIENT
-    let client;
-
-    try {
-        client = Client.forName(process.env.HEDERA_NETWORK).setOperator(
-            AccountId.fromString(process.env.OPERATOR_ID),
-            PrivateKey.fromString(process.env.OPERATOR_KEY)
-        );
-    } catch {
-        throw new Error(
-            "Environment variables HEDERA_NETWORK, OPERATOR_ID, and OPERATOR_KEY are required." + '\n'
-        );
-    }
+    // SETUP CLIENTS 
+    let client = new Connection().client;
 
     //Set the max transaction fee the client is willing to pay to 2 hbars
     client.setMaxTransactionFee(new Hbar(2));
@@ -26,7 +15,7 @@ async function main(){
     const editKey = PrivateKey.fromString(process.env.PRIVATE_KEY);
 
     //Generate New Key Pair
-    var keys = generateKeys();
+    let keys = generateKeys();
     const phrase = (await keys).phrase;
     const publicKey = (await keys).public;
     const privateKey = (await keys).private;
@@ -70,7 +59,7 @@ async function generateKeys(){
     const newAccountPublicKey = newAccountPrivateKey.publicKey;
 
     //Output keys
-    return keys = {
+    return {
         phrase: newMnemonic,
         private: newAccountPrivateKey,
         public: newAccountPublicKey
