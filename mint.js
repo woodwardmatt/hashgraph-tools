@@ -195,11 +195,11 @@ async function createNFTCollection(client, nftCustomFees){
                 .setSupplyType(TokenSupplyType.Finite)
                 .setMaxSupply(maxCollectionSupply)
                 .setCustomFees(nftCustomFees)
-                .setAdminKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setSupplyKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setPauseKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setFreezeKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setWipeKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
+                .setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
+                .setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
+                .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
+                .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
+                .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
                 .freezeWith(client)
                 .sign(PrivateKey.fromString(process.env.TREASURY_KEY));
 
@@ -215,11 +215,11 @@ async function createNFTCollection(client, nftCustomFees){
                 .setTreasuryAccountId(process.env.TREASURY_ID)
                 .setSupplyType(TokenSupplyType.Finite)
                 .setMaxSupply(maxCollectionSupply)
-                .setAdminKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setSupplyKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setPauseKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setFreezeKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
-                .setWipeKey(PrivateKey.fromString(process.env.OPERATOR_KEY))
+                .setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
+                .setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
+                .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
+                .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
+                .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
                 .freezeWith(client)
                 .sign(PrivateKey.fromString(process.env.TREASURY_KEY));
         }

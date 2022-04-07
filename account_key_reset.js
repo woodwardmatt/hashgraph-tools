@@ -1,5 +1,6 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
+import { Keys } from "./modules/keys.js";
 import { AccountId, PrivateKey, AccountUpdateTransaction, Hbar, Mnemonic } from "@hashgraph/sdk";
 
 async function main(){
@@ -15,7 +16,7 @@ async function main(){
     const editKey = PrivateKey.fromString(process.env.PRIVATE_KEY);
 
     //Generate New Key Pair
-    let keys = generateKeys();
+    let keys = Keys.generateKeys();
     const phrase = (await keys).phrase;
     const publicKey = (await keys).public;
     const privateKey = (await keys).private;
@@ -47,23 +48,6 @@ async function main(){
     //Log Transaction Status
     console.log("The transaction consensus status is " + transactionStatus.toString());
 
-}
-
-async function generateKeys(){
-
-    //Generate a 24-word mnemonic
-    const newMnemonic = await Mnemonic.generate();
-
-    //Create new keys
-    const newAccountPrivateKey = await newMnemonic.toPrivateKey(); 
-    const newAccountPublicKey = newAccountPrivateKey.publicKey;
-
-    //Output keys
-    return {
-        phrase: newMnemonic,
-        private: newAccountPrivateKey,
-        public: newAccountPublicKey
-    };
 }
 
 main();
