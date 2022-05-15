@@ -6,6 +6,14 @@ The following are currently included:
 - [Token Key Reset](https://github.com/woodwardmatt/hashgraph-tools/wiki/Token-Key-Reset) - (token_key_reset.js) An example of the transaction used to reset the keys on your Tokens.
 - [Burn NFTs](https://github.com/woodwardmatt/hashgraph-tools/wiki/Burn-NFTs) - (burn.js) An example of the burn transaction used to burn NFTs.
 
+## Getting Started
+To use these scripts: 
+- Download / Clone the repo to your local machine
+- Install NodeJS - https://nodejs.dev/learn/how-to-install-nodejs
+- Install all dependencies using `npm install` (using the terminal inside VSCode for example)
+- Configure the script that you want to run in package.json
+- Run `npm start`
+
 ## Further Information
 Please see the [wiki](https://github.com/woodwardmatt/hashgraph-tools/wiki/) for further notes / information on each transaction.
 
