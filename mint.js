@@ -200,8 +200,7 @@ async function createNFTCollection(client, nftCustomFees){
                 .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
                 .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
                 .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
-                .freezeWith(client)
-                .sign(PrivateKey.fromString(process.env.TREASURY_KEY));
+                .freezeWith(client);
 
         }else{
 
@@ -220,12 +219,11 @@ async function createNFTCollection(client, nftCustomFees){
                 .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
                 .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
                 .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
-                .freezeWith(client)
-                .sign(PrivateKey.fromString(process.env.TREASURY_KEY));
+                .freezeWith(client);
         }
 
         // SIGN, SUBMIT TRANSACTION & GET RECEIPT FOR NFT
-        let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(process.env.OPERATOR_KEY));
+        let nftCreateTxSign = await(await nftCreate.sign(PrivateKey.fromString(process.env.ADMIN_KEY))).sign(PrivateKey.fromString(process.env.TREASURY_KEY));
         let nftCreateSubmit = await nftCreateTxSign.execute(client);
         let nftCreateRx = await nftCreateSubmit.getReceipt(client);
         let tokenId = nftCreateRx.tokenId;   
@@ -342,7 +340,7 @@ async function mintToken(metadata, client, tokenId) {
         .setMetadata([Buffer.from(metadata)])
         .freezeWith(client);
     
-        let mintTxSign = await mintTx.sign(PrivateKey.fromString(process.env.OPERATOR_KEY));
+        let mintTxSign = await mintTx.sign(PrivateKey.fromString(process.env.SUPPLY_KEY));
         let mintTxSubmit = await mintTxSign.execute(client);
         let mintRx = await mintTxSubmit.getReceipt(client);
 
