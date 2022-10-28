@@ -194,13 +194,17 @@ async function createNFTCollection(client, nftCustomFees){
                 .setTreasuryAccountId(process.env.TREASURY_ID)
                 .setSupplyType(TokenSupplyType.Finite)
                 .setMaxSupply(maxCollectionSupply)
-                .setCustomFees(nftCustomFees)
-                .setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
-                .setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
-                .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
-                .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
-                .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
-                .freezeWith(client);
+                .setCustomFees(nftCustomFees);
+
+                //Conditionally add keys where they are provided
+                if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
+                if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
+                if(process.env.PAUSE_KEY) nftCreate = nftCreate.setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
+                if(process.env.FREEZE_KEY) nftCreate = nftCreate.setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
+                if(process.env.WIPE_KEY) nftCreate = nftCreate.setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
+
+                //Freeze transaction from further modification
+                nftCreate = nftCreate.freezeWith(client);
 
         }else{
 
@@ -213,17 +217,29 @@ async function createNFTCollection(client, nftCustomFees){
                 .setInitialSupply(0)                                        //Must be zero so you can set unique metadata per NFT?
                 .setTreasuryAccountId(process.env.TREASURY_ID)
                 .setSupplyType(TokenSupplyType.Finite)
-                .setMaxSupply(maxCollectionSupply)
-                .setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
-                .setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
-                .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
-                .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
-                .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
-                .freezeWith(client);
+                .setMaxSupply(maxCollectionSupply);
+
+                //Conditionally add keys where they are provided
+                if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
+                if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
+                if(process.env.PAUSE_KEY) nftCreate = nftCreate.setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
+                if(process.env.FREEZE_KEY) nftCreate = nftCreate.setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
+                if(process.env.WIPE_KEY) nftCreate = nftCreate.setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
+
+                //Freeze transaction from further modification
+                nftCreate = nftCreate.freezeWith(client);
         }
 
         // SIGN, SUBMIT TRANSACTION & GET RECEIPT FOR NFT
-        let nftCreateTxSign = await(await nftCreate.sign(PrivateKey.fromString(process.env.ADMIN_KEY))).sign(PrivateKey.fromString(process.env.TREASURY_KEY));
+        let nftCreateTxSign = null
+
+        //Verify if we need to sign with the admin key too (if supplied)
+        if(process.env.ADMIN_KEY){
+            nftCreateTxSign = await(await nftCreate.sign(PrivateKey.fromString(process.env.ADMIN_KEY))).sign(PrivateKey.fromString(process.env.TREASURY_KEY));
+        }else{
+            nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(process.env.TREASURY_KEY));
+        }
+
         let nftCreateSubmit = await nftCreateTxSign.execute(client);
         let nftCreateRx = await nftCreateSubmit.getReceipt(client);
         let tokenId = nftCreateRx.tokenId;   

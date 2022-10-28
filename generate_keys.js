@@ -24,11 +24,17 @@ async function main(){
         const phrase = (await credentials).phrase;
         const publicKey = (await credentials).public;
         const privateKey = (await credentials).private;
+        const EVMpublicKey = (await credentials).EVMpublic;
+        const EVMprivateKey = (await credentials).EVMprivate;
+        const EVMAddress = (await credentials).EVMAddress;
 
         //Credentials - Only logged here, store safely please.
         console.log('New mnemonic phrase: ' + phrase);
         console.log('New private key: ' + privateKey);
         console.log('New public key: ' + publicKey); 
+        console.log('New public EVM key: ' + EVMpublicKey); 
+        console.log('New private EVM key: ' + EVMprivateKey); 
+        console.log('New EVM Address: ' + EVMAddress);                         
         console.log('');         
     });
 
