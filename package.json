@@ -6,8 +6,8 @@
   "type": "module",
   "dependencies": {
     "@hashgraph/sdk": "^2.6.0",
-    "dotenv": "^10.0.0",
-    "nft.storage": "^5.2.0"
+    "dotenv": "^16.0.0",
+    "nft.storage": "^7.0.0"
   },
   "scripts": {
     "start": "node -r dotenv/config mint.js"

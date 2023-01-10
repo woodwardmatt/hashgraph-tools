@@ -9,6 +9,18 @@ const storageclient = new NFTStorage({ token: process.env.STORAGE_KEY });
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 
+/*
+    Use Case:
+    1. Create a Token and mint a collection of unique NFTs to that token ID (Define required NFT metadata in the "nfts" array)
+    2. Create a Token and mint a collection of duplicate NFTs (same image & meta data) to that token ID (Define the "supply" variable as greater than 1 to depicate the number of duplicates).
+    3. Create a Token and mint a collection of duplicate NFTs (different image, same meta data) to that token ID (Define the "autoSupply" and "autoSupplyStart" to depicte the number of nfts). 
+       Images should all be prefixed with their serial number (e.g. #001-file.png") in the "mediaPath" directory, and the corresponding image file in the "nft" meta should just be the suffix (e.g. "-file.png")
+    4. Update an existing Token (by supplying the "existingCollectionId") with more NFTs (i.e. increase the supply) using any of the above variations.
+
+    Default: 
+    Create a new Token with a max supply of 10000, and mint a single NFT (no duplicates).
+*/
+
 // NFT Media location - Where your NFT resources are stored locally
 const mediaPath = './images/'; 
 
@@ -24,6 +36,13 @@ const maxCollectionSupply = 10000;
 
 //Define supply per NFT - Set this to the number of copies per NFT required
 const supply = 1;
+
+//Define the automatic supply for NFT image variations with the same metadata
+//Note: Using autoSupply will automatically prepend the serial number to the image path in the image folder
+const autoSupply = 0; // Or const autoSupply = 50;
+
+//Define the starting point for auto-increments (typically 1, but higher if restarting from errors)
+const autoSupplyStart = 1;
 
 // Setup metadata for NFTs here - This is for reference by the script only. 
 // Note: 
@@ -61,7 +80,7 @@ const nfts = [
                             "value": "yellow"
                         }
                     ],
-                },                
+                },              
                 // {
                 //     name: '<Token Name>',
                 //     description: '<Human readable description of the asset>',
@@ -177,7 +196,7 @@ async function createNFTCollection(client, nftCustomFees){
     if(!client) return -1;
 
     try {
-
+ 
         // DECLARE LOCAL VARS
         let nftCreate;
 
@@ -271,10 +290,23 @@ async function createNFTCollection(client, nftCustomFees){
 }
 
 // FOR UPLOADING MEDIA TO IPFS (VIA NFT.STORAGE)
-async function storeNFTAssets(nft){
+async function storeNFTAssets(nft, serial = 0){
+
+    //Setup prefix variable for image name
+    let prefix = "";
+
+    //Verify we want to pre-pend an incremental number
+    if(serial > 0){
+
+        //Convert int to string
+        prefix = serial.toString();;
+
+        //Pad string with leading zeros
+        prefix = String(prefix).padStart(2, '0');
+    }
 
     //Get Root File details
-    const rootFile  = await fs.promises.readFile(mediaPath + nft.image);
+    const rootFile = await fs.promises.readFile(mediaPath + prefix + nft.image);
     const rootFileCid = await storageclient.storeBlob(new Blob([rootFile]));
     const rootFileUrl = "ipfs://" + rootFileCid;
 
@@ -314,15 +346,33 @@ async function createNFTs(client, collectionId){
             // CREATE NFTS IN COLLECTION
             asyncForEach(nfts, async (nft) => {
 
-                // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
-                let metadata = await storeNFTAssets(nft);
+                //Verify if we are auto-incrementing 
+                if(autoSupply > 0){
 
-                // CREATE SUPPLY FOR NFTS (i.e. DUPLICATES)
-                for (let index = 0; index < supply; index++) {
+                    //Automatically increment 
+                    for (let index = autoSupplyStart; index < (autoSupply + 1); index++){
+  
+                        // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
+                        let metadata = await storeNFTAssets(nft, index);
 
-                    // MINT TOKEN USING METADATA & COLLECTION ID
-                    let tokenReceipt = await mintToken(metadata, client, collectionId);
-                }  
+                        // MINT TOKEN USING METADATA & COLLECTION ID
+                        let tokenReceipt = await mintToken(metadata, client, collectionId);                        
+1                       
+                    }
+
+                }else{
+
+                    // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
+                    let metadata = await storeNFTAssets(nft);
+
+                    // CREATE SUPPLY FOR NFTS (i.e. DUPLICATES)
+                    for (let index = 0; index < supply; index++) {
+
+                        // MINT TOKEN USING METADATA & COLLECTION ID
+                        let tokenReceipt = await mintToken(metadata, client, collectionId);
+                    } 
+
+                } 
             })
 
         }else{
