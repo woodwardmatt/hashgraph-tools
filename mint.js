@@ -213,6 +213,7 @@ async function createNFTCollection(client, nftCustomFees){
                 .setTreasuryAccountId(process.env.TREASURY_ID)
                 .setSupplyType(TokenSupplyType.Finite)
                 .setMaxSupply(maxCollectionSupply)
+                .setMaxTransactionFee(new Hbar(100))
                 .setCustomFees(nftCustomFees);
 
                 //Conditionally add keys where they are provided
@@ -236,7 +237,8 @@ async function createNFTCollection(client, nftCustomFees){
                 .setInitialSupply(0)                                        //Must be zero so you can set unique metadata per NFT?
                 .setTreasuryAccountId(process.env.TREASURY_ID)
                 .setSupplyType(TokenSupplyType.Finite)
-                .setMaxSupply(maxCollectionSupply);
+                .setMaxSupply(maxCollectionSupply)
+                .setMaxTransactionFee(new Hbar(100));
 
                 //Conditionally add keys where they are provided
                 if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(PrivateKey.fromString(process.env.ADMIN_KEY))
