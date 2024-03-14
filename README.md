@@ -1,10 +1,11 @@
 # hashgraph-tools
 The following are currently included: 
 - [Account Key Reset](https://github.com/woodwardmatt/hashgraph-tools/wiki/Account-Key-Reset) - (account_key_reset.js) An example of the transaction required to update an account's mnemonic phrase, and derived private & public keys.
-- [Minting NFTs](https://github.com/woodwardmatt/hashgraph-tools/wiki/Minting-NFTs) - (mint.js) An example of the transactions required to mint NFTs underneath a parent Token ID (i.e. collection).
+- [Burning NFTs](https://github.com/woodwardmatt/hashgraph-tools/wiki/Burn-NFTs) - (burn.js) An example of the burn transaction used to burn NFTs.
+- [Generate Accounts](https://github.com/woodwardmatt/hashgraph-tools/wiki/Generate-Accounts) - (generate_accounts.js) An example of a transaction that will create a list of new accounts (and output all credentials).
 - [Generate Keys](https://github.com/woodwardmatt/hashgraph-tools/wiki/Generate-Keys) - (generate_keys.js) An quick utility to generate new key pairs for working with NFTs
+- [Minting NFTs](https://github.com/woodwardmatt/hashgraph-tools/wiki/Minting-NFTs) - (mint.js) An example of the transactions required to mint NFTs underneath a parent Token ID (i.e. collection) - More info coming....(bear with me)
 - [Token Key Reset](https://github.com/woodwardmatt/hashgraph-tools/wiki/Token-Key-Reset) - (token_key_reset.js) An example of the transaction used to reset the keys on your Tokens.
-- [Burn NFTs](https://github.com/woodwardmatt/hashgraph-tools/wiki/Burn-NFTs) - (burn.js) An example of the burn transaction used to burn NFTs.
 
 ## Getting Started
 To use these scripts: 
