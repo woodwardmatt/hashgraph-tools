@@ -17,7 +17,7 @@ async function main(){
         {
             "name" : "Non-EVM Account",
             "evm" : false
-        },        
+        }, 
     ];
 
     //Fair Warning
@@ -42,10 +42,13 @@ async function main(){
         const EVMprivateKey = (await credentials).EVMprivate;
         const EVMAddress = (await credentials).EVMAddress;
 
-        //Create the Account (with 100 hbars)
-        const transaction = new AccountCreateTransaction()
+        //Create the Account (with 50 hbars)
+        let transaction = new AccountCreateTransaction()
             .setKey(publicKey)
-            .setInitialBalance(new Hbar(100));
+            .setInitialBalance(new Hbar(50));
+
+        //Add Account Alias for EVM Accounts
+        if(account["evm"]) transaction = transaction.setAlias(EVMAddress)
 
         //Sign the transaction with our client
         const txResponse = await transaction.execute(client);
