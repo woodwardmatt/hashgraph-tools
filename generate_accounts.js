@@ -9,7 +9,16 @@ async function main(){
     let client = new Connection().client;    
 
     //List of accounts we want to generate
-    let accounts = ['Operator Account', 'Non-Operator Account'];
+    let accounts = [
+        {
+            "name" : "EVM Account",
+            "evm" : true
+        },
+        {
+            "name" : "Non-EVM Account",
+            "evm" : false
+        },        
+    ];
 
     //Fair Warning
     console.log('*****************************************');
@@ -21,11 +30,11 @@ async function main(){
         
         //Title
         console.log('*****************************************');
-        console.log('* Information for: ' + account);
+        console.log('* Information for: ' + account["name"]);
         console.log('*****************************************');
 
         //Generate New Keys for the Account (we need the public key before creating the account)
-        let credentials = Keys.generateKeys();
+        let credentials = Keys.generateKeys(account["evm"]);
         const phrase = (await credentials).phrase;
         const publicKey = (await credentials).public;
         const privateKey = (await credentials).private;
@@ -52,9 +61,15 @@ async function main(){
         console.log('Mnemonic phrase: ' + phrase);
         console.log('Private key: ' + privateKey);
         console.log('Public key: ' + publicKey); 
-        console.log('Public EVM key: ' + EVMpublicKey); 
-        console.log('Private EVM key: ' + EVMprivateKey); 
-        console.log('EVM Address: ' + EVMAddress);                         
+
+        //Output EVM information for EVM Keys
+        if(account["evm"]){
+            console.log('Public EVM key: ' + EVMpublicKey); 
+            console.log('Private EVM key: ' + EVMprivateKey); 
+            console.log('EVM Address: ' + EVMAddress);  
+        }        
+        
+        //Add space between key outputs
         console.log('');         
     });
 
