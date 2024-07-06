@@ -1,12 +1,9 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
+import { Storage } from "./modules/storage.js";
 import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
-import { NFTStorage, File, Blob } from "nft.storage";
 import fs from "fs";
 import { error } from "console";
-
-// Configure NFT.Storage client
-const storageclient = new NFTStorage({ token: process.env.STORAGE_KEY });
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 
@@ -23,7 +20,7 @@ const storageclient = new NFTStorage({ token: process.env.STORAGE_KEY });
 */
 
 // NFT Media location - Where your NFT resources are stored locally
-const mediaPath = './images/'; 
+const mediaPath = '/home/...<INSERT ABSOLUTE PATH HERE>.../images/'; 
 
 // Common NFT metadata
 const creator = 'Provide your creator name here';             // Enter Creator name here e.g. AffirmationNFT (comma separated for multiple)
@@ -297,52 +294,6 @@ async function createNFTCollection(client, nftCustomFees){
     return -1;
 }
 
-// FOR UPLOADING MEDIA TO IPFS (VIA NFT.STORAGE)
-async function storeNFTAssets(nft, serial = 0){
-
-    //Setup prefix variable for image name
-    let prefix = "";
-
-    //Verify we want to pre-pend an incremental number
-    if(serial > 0){
-
-        //Convert int to string
-        prefix = serial.toString();;
-
-        //Pad string with leading zeros
-        prefix = String(prefix).padStart(2, '0');
-    }
-
-    //Get Root File details
-    const rootFile = await fs.promises.readFile(mediaPath + prefix + nft.image);
-    const rootFileCid = await storageclient.storeBlob(new Blob([rootFile]));
-    const rootFileUrl = "ipfs://" + rootFileCid;
-
-    //Build Metadata - Ref - HIP 412: https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-412.md
-    const metadataObj = {
-        "name": nft.name,
-        "creator": creator,        
-        "description": nft.description,
-        "image": rootFileUrl,
-        "type": nft.type,
-        "properties" : nft.properties,
-        "attributes" : nft.attributes,
-        "format": "opensea"
-    }
-
-    //Convert to Json
-    const metadataJsn = JSON.stringify(metadataObj);  
-    
-    //Get Meta Data Url
-    const metadataBlob = new Blob([metadataJsn], { type: 'application/json' });
-    const metadataCid = await storageclient.storeBlob(metadataBlob);
-    const metadataUrl = "ipfs://" + metadataCid;     
-
-    console.log('IPFS URL for the metadata:' + metadataUrl + '\n');
-
-    return metadataUrl;
-}
-
 // CREATE NFTF DEFINED (AT THE TOP OF THE SCRIPT)
 async function createNFTs(client, collectionId){
 
@@ -361,7 +312,7 @@ async function createNFTs(client, collectionId){
                     for (let index = autoSupplyStart; index < (autoSupply + 1); index++){
   
                         // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
-                        let metadata = await storeNFTAssets(nft, index);
+                        let metadata = await Storage.storeAssets(creator, mediaPath, nft, index)
 
                         // MINT TOKEN USING METADATA & COLLECTION ID
                         let tokenReceipt = await mintToken(metadata, client, collectionId);                        
@@ -371,7 +322,7 @@ async function createNFTs(client, collectionId){
                 }else{
 
                     // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
-                    let metadata = await storeNFTAssets(nft);
+                    let metadata = await Storage.storeAssets(creator, mediaPath, nft)
 
                     // CREATE SUPPLY FOR NFTS (i.e. DUPLICATES)
                     for (let index = 0; index < supply; index++) {
