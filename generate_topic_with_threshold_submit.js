@@ -32,9 +32,9 @@ async function main(){
     console.log('');      
 
     // Add Keys for Multisig (based on 3 accounts)
-    const publicKey1 = PublicKey.fromString('<Insert DER-Ecndoed Public Key>');
-    const publicKey2 = PublicKey.fromString('<Insert DER-Ecndoed Public Key>');
-    const publicKey3 = PublicKey.fromString('<Insert DER-Ecndoed Public Key>');
+    const publicKey1 = PublicKey.fromString('<Insert DER-Encoded Public Key>');
+    const publicKey2 = PublicKey.fromString('<Insert DER-Encoded Public Key>');
+    const publicKey3 = PublicKey.fromString('<Insert DER-Encoded Public Key>');
 
     // Create a `KeyList` that represents a 1 of 3 multisig threshold
     const multisigPublicKeys = [publicKey1, publicKey2, publicKey3];
