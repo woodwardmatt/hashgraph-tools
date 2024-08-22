@@ -32,7 +32,7 @@ async function main(){
         .setMaxTransactionFee(new Hbar(30)) //Change the default max transaction fee
         .freezeWith(client);
 
-    //Sign the transaction with the old key and new key(s)
+    //Sign the transaction with the all threshold key(s)
     const SignedByFirstTx = await transaction.sign(privateKey1);
     const SignedBySecondTx = await SignedByFirstTx.sign(privateKey2);
     const SignedByThirdTx = await SignedBySecondTx.sign(privateKey3);
@@ -40,7 +40,7 @@ async function main(){
     // Sign the transaction with our client
     const txResponse = await SignedByThirdTx.execute(client);
 
-    // Request the receipt of the transaction (so we can get the Topic Id we've created)
+    // Request the receipt of the transaction (so we can get the Token Id we've created)
     const receipt = await txResponse.getReceipt(client);
 
     // Get the Token ID
