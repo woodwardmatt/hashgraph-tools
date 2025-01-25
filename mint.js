@@ -2,7 +2,6 @@
 import { Connection } from "./modules/connection.js";
 import { Storage } from "./modules/storage.js";
 import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
-import fs from "fs";
 import { error } from "console";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
@@ -10,8 +9,8 @@ import { error } from "console";
 /*
     Use Case:
     1. Create a Token and mint a collection of unique NFTs to that token ID (Define required NFT metadata in the "nfts" array)
-    2. Create a Token and mint a collection of duplicate NFTs (same image & meta data) to that token ID (Define the "supply" variable as greater than 1 to depicate the number of duplicates).
-    3. Create a Token and mint a collection of duplicate NFTs (different image, same meta data) to that token ID (Define the "autoSupply" and "autoSupplyStart" to depicte the number of nfts). 
+    2. Create a Token and mint a collection of duplicate NFTs (same image & meta data) to that token ID (Define the "supply" variable as greater than 1 to depict the number of duplicates).
+    3. Create a Token and mint a collection of duplicate NFTs (different image, same meta data) to that token ID (Define the "autoSupply" and "autoSupplyStart" to depict the number of nfts). 
        Images should all be prefixed with their serial number (e.g. #001-file.png") in the "mediaPath" directory, and the corresponding image file in the "nft" meta should just be the suffix (e.g. "-file.png")
     4. Update an existing Token (by supplying the "existingCollectionId") with more NFTs (i.e. increase the supply) using any of the above variations.
 
@@ -20,7 +19,7 @@ import { error } from "console";
 */
 
 // NFT Media location - Where your NFT resources are stored locally
-const mediaPath = '/home/...<INSERT ABSOLUTE PATH HERE>.../images/'; 
+const mediaPath = '/home/...<INSERT ABSOLUTE PATH HERE>.../images/';
 
 // Common NFT metadata
 const creator = 'Provide your creator name here';             // Enter Creator name here e.g. AffirmationNFT (comma separated for multiple)
@@ -131,6 +130,9 @@ async function main(){
 
     // CREATE NFTs IN COLLECTION
     await createNFTs(client, collectionId);
+
+    // EXIT SCRIPT
+    process.exit();
 }
 
 //ADD CUSTOM FEES (AS DEFINED IN FEES ABOVE)
@@ -303,7 +305,7 @@ async function createNFTs(client, collectionId){
         if(collectionId !== '' && collectionId !== -1){
 
             // CREATE NFTS IN COLLECTION
-            asyncForEach(nfts, async (nft) => {
+            await asyncForEach(nfts, async (nft) => {
 
                 //Verify if we are auto-incrementing 
                 if(autoSupply > 0){
@@ -315,8 +317,7 @@ async function createNFTs(client, collectionId){
                         let metadata = await Storage.storeAssets(creator, mediaPath, nft, index)
 
                         // MINT TOKEN USING METADATA & COLLECTION ID
-                        let tokenReceipt = await mintToken(metadata, client, collectionId);                        
-1                       
+                        let tokenReceipt = await mintToken(metadata, client, collectionId);
                     }
 
                 }else{
@@ -330,9 +331,8 @@ async function createNFTs(client, collectionId){
                         // MINT TOKEN USING METADATA & COLLECTION ID
                         let tokenReceipt = await mintToken(metadata, client, collectionId);
                     } 
-
                 } 
-            })
+            });
 
         }else{
 
@@ -384,4 +384,4 @@ async function mintToken(metadata, client, tokenId) {
     }
 }
 
-main().catch((error)=>{console.log(error);})
+main().catch((error)=>{console.log(error);});
