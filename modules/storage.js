@@ -1,7 +1,12 @@
-//Configure imports / dependencies
-import axios from "axios"
-import FormData from "form-data"
+// Configure required imports / dependencies
+import { PinataSDK } from "pinata-web3";
 import fs from "fs";
+
+// Setup Pinata SDK Object
+const pinata = new PinataSDK({
+    pinataJwt: process.env.PINATA_JWT,
+    pinataGateway: process.env.GATEWAY_URL
+})
 
 // FOR UPLOADING MEDIA TO IPFS (VIA PINATA)
 export class Storage{
@@ -25,34 +30,25 @@ export class Storage{
 
         try {
 
-            //Read in file required to filestream variable
-            const file = fs.createReadStream(mediaPath + prefix + nft.image);
-
-            //Build metadata for pinata metadata (not NFT metadata)
-            var metadata = {
-                name: nft.image,
-            }
+            //Read in file required to buffer variable
+            const blob = fs.readFileSync(mediaPath + prefix + nft.image);
 
             //Store file on Pinata
-            var cid = await this.storeFile(file, metadata)
+            var cid = await this.storeFile(blob, nft)
 
+            //Debug output
             console.log("Pinata File CID : " + cid)
 
             //Build Metadata - Ref - HIP 412: https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-412.md
-            metadata = {
-                pinataContent: {
-                    "name": nft.name,
-                    "creator": creator,        
-                    "description": nft.description,
-                    "image": "ipfs://" + cid,
-                    "type": nft.type,
-                    "properties" : nft.properties,
-                    "attributes" : nft.attributes,
-                    "format": "opensea"
-                },
-                pinataMetadata: {
-                  name: "metadata.json"
-                }
+            var metadata = {
+                name: nft.name,
+                creator: creator,        
+                description: nft.description,
+                image: "ipfs://" + cid,
+                type: nft.type,
+                properties: nft.properties,
+                attributes: nft.attributes,
+                format: "opensea"
             }
 
             //Store metadata on Pinata
@@ -72,66 +68,29 @@ export class Storage{
 
         try {
 
-            //Convert to Json
-            var data = JSON.stringify(metadata);            
-
-            //Create post request to Pinata
-            const res = await axios.post(
-                "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-                data,
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${process.env.PINATA_JWT}`,
-                  },
-                }
-            );
+            //Upload metadata to Pinata
+            const upload = await pinata.upload.json(metadata);
 
             //Output CID (Note: No leading IPFS://)
-            return res.data.IpfsHash;
+            return upload.IpfsHash;
             
         } catch (error) {
             console.log(error)
         }
     }
 
-    static async storeFile(file, metadata){
+    static async storeFile(blob, nft){
 
         try {
             
-            //Setup new form data variable to post to Pinata
-            const formData = new FormData();
+            //Create file object to upload to Pinata
+            const file = new File([blob], nft.image, { type: nft.type });
 
-            //Append File to Form Data (for posting)
-            formData.append("file", file);
-
-            //Build metadata for pinata
-            const pinataMetadata = JSON.stringify(metadata);
-
-            //Append metadata to Form Data
-            formData.append("pinataMetadata", pinataMetadata);
-
-            //Configure Pinata Options
-            const pinataOptions = JSON.stringify({
-                cidVersion: 1,
-            });
-
-            //Append options to Form Data
-            formData.append("pinataOptions", pinataOptions);
-
-            //Create post request to Pinata
-            const res = await axios.post(
-                "https://api.pinata.cloud/pinning/pinFileToIPFS",
-                formData,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.PINATA_JWT}`,
-                  },
-                }
-            );
+            //Upload file to Pinata
+            const upload = await pinata.upload.file(file);
 
             //Output CID (Note: No leading IPFS://)
-            return res.data.IpfsHash;
+            return upload.IpfsHash;
 
         } catch (error) {
             console.log(error)

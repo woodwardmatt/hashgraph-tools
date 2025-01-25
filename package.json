@@ -6,8 +6,8 @@
   "type": "module",
   "dependencies": {
     "@hashgraph/sdk": "^2.6.0",
-    "axios": "^1.7.2",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "pinata-web3": "^0.5.4"
   },
   "scripts": {
     "start": "node -r dotenv/config mint.js"
