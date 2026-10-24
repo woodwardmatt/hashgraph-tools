@@ -42,6 +42,7 @@ The following are worth noting:
 - Each NFT's media file is uploaded to IPFS (via Pinata), then its metadata is built and uploaded, following [HIP-412](https://github.com/hiero-ledger/hiero-improvement-proposals/blob/main/HIP/hip-412.md) (using the opensea format to allow for traits).
 - When using `autoSupply`, the image file names are prefixed with a 2-digit number (`01`, `02` ... `10`, `11` ...). For example, with an `image` of `-file.png` the script looks for `01-file.png`, `02-file.png` and so on in your `mediaPath` folder.
 - If an upload to Pinata fails (e.g. a file is missing), the reason is logged and that NFT is skipped (not minted). Use `autoSupplyStart` to pick up where you left off.
+- Files are uploaded to Pinata's public IPFS network, using Pinata's current (v3) Files API. If your Pinata JWT is a scoped key, make sure it has permission to upload files (Files: Write) - older scoped keys may need to be re-created. An admin key also works.
 - "Additional" files beyond the preview image (in `properties.files`) should be uploaded to IPFS in advance and referenced in the `nfts` list.
 - Keys can be ECDSA or ED25519 (see [Key Formats](https://github.com/woodwardmatt/hashgraph-tools/wiki#key-formats)).
 

@@ -2,7 +2,7 @@
 import { Connection } from "./modules/connection.js";
 import { Keys } from "./modules/keys.js";
 import { Storage } from "./modules/storage.js";
-import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
+import { AccountId, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 

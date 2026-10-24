@@ -37,7 +37,16 @@ export class Keys{
         if(!value || !value.trim()) throw new Error("Keys.fromEnv(): " + name + " is missing from your env file.");
 
         try {
-            return this.parsePrivateKey(value, process.env[name + "_TYPE"] || "ECDSA");
+            const type = process.env[name + "_TYPE"];
+            const key = this.parsePrivateKey(value, type || "ECDSA");
+
+            //DER keys carry their own type, so flag any <NAME>_TYPE entry that doesn't match it
+            if(type){
+                const expected = (String(type).trim().toUpperCase() === "ED25519") ? "ED25519" : "secp256k1";
+                if(key.type !== expected) console.warn("Keys.fromEnv(): " + name + "_TYPE is " + type + ", but " + name + " is a DER-encoded " + (key.type === "secp256k1" ? "ECDSA" : key.type) + " key. Using " + (key.type === "secp256k1" ? "ECDSA" : key.type) + " (you can remove " + name + "_TYPE).");
+            }
+
+            return key;
         } catch (error) {
             throw new Error("Keys.fromEnv(): " + name + " could not be parsed - " + error.message);
         }

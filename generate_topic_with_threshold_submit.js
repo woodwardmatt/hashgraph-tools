@@ -1,7 +1,7 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
 import { Keys } from "./modules/keys.js";
-import { TopicCreateTransaction,KeyList,PrivateKey, PublicKey } from "@hashgraph/sdk";
+import { TopicCreateTransaction, KeyList, PublicKey } from "@hashgraph/sdk";
 
 async function main(){
 

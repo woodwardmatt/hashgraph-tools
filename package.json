@@ -5,9 +5,9 @@
   "main": "mint.js",
   "type": "module",
   "dependencies": {
-    "@hashgraph/sdk": "^2.6.0",
-    "dotenv": "^16.0.0",
-    "pinata-web3": "^0.5.4"
+    "@hashgraph/sdk": "^2.81.0",
+    "dotenv": "^16.6.1",
+    "pinata": "^2.5.6"
   },
   "scripts": {
     "start": "node -r dotenv/config mint.js",
@@ -22,5 +22,17 @@
     "account-key-threshold": "node -r dotenv/config account_key_to_threshold_key.js",
     "token-key-reset": "node -r dotenv/config token_key_reset.js",
     "token-grant-kyc": "node -r dotenv/config token_grant_kyc.js"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.6",
+    "@hashgraph/sdk": {
+      "protobufjs": "^8.8.1"
+    },
+    "@hashgraph/proto": {
+      "protobufjs": "^7.6.6"
+    },
+    "@grpc/proto-loader": {
+      "protobufjs": "^7.6.6"
+    }
   }
 }

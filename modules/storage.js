@@ -1,5 +1,5 @@
 // Configure required imports / dependencies
-import { PinataSDK } from "pinata-web3";
+import { PinataSDK } from "pinata";
 import fs from "fs";
 
 // Setup Pinata SDK Object
@@ -69,11 +69,11 @@ export class Storage{
 
     static async storeJSON(metadata){
 
-        //Upload metadata to Pinata (errors are handled by storeAssets)
-        const upload = await pinata.upload.json(metadata);
+        //Upload metadata to Pinata's public IPFS network (errors are handled by storeAssets)
+        const upload = await pinata.upload.public.json(metadata);
 
         //Output CID (Note: No leading IPFS://)
-        return upload.IpfsHash;
+        return upload.cid;
     }
 
     static async storeFile(blob, nft){
@@ -81,10 +81,10 @@ export class Storage{
         //Create file object to upload to Pinata
         const file = new File([blob], nft.image, { type: nft.type });
 
-        //Upload file to Pinata (errors are handled by storeAssets)
-        const upload = await pinata.upload.file(file);
+        //Upload file to Pinata's public IPFS network (errors are handled by storeAssets)
+        const upload = await pinata.upload.public.file(file);
 
         //Output CID (Note: No leading IPFS://)
-        return upload.IpfsHash;
+        return upload.cid;
     }
 }

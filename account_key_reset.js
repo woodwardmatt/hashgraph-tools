@@ -1,7 +1,7 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
 import { Keys } from "./modules/keys.js";
-import { AccountId, PrivateKey, AccountUpdateTransaction, Hbar, Mnemonic } from "@hashgraph/sdk";
+import { AccountId, AccountUpdateTransaction, Hbar } from "@hashgraph/sdk";
 
 async function main(){
 
