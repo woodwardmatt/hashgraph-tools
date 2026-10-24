@@ -26,7 +26,7 @@ async function main(){
     console.log('*****************************************');
 
     //Iterate over the array and generate accounts for each item
-    asyncForEach(accounts, async (account) => {
+    await asyncForEach(accounts, async (account) => {
         
         //Title
         console.log('*****************************************');
@@ -42,7 +42,7 @@ async function main(){
         const EVMprivateKey = (await credentials).EVMprivate;
         const EVMAddress = (await credentials).EVMAddress;
 
-        //Create the Account (with 50 hbars)
+        //Create the Account (with an initial hbar balance)
         let transaction = new AccountCreateTransaction()
             .setKey(publicKey)
             .setInitialBalance(new Hbar(50));
@@ -84,4 +84,7 @@ async function asyncForEach(array, callback) {
     }
 }
 
-main();
+//Execute Script (& Log Errors), then exit to prevent the terminal locking upon completion
+main()
+    .then(() => process.exit(0))
+    .catch((error) => { console.log(error); process.exit(1); });

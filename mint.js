@@ -3,7 +3,6 @@ import { Connection } from "./modules/connection.js";
 import { Keys } from "./modules/keys.js";
 import { Storage } from "./modules/storage.js";
 import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
-import { error } from "console";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 
@@ -12,7 +11,7 @@ import { error } from "console";
     1. Create a Token and mint a collection of unique NFTs to that token ID (Define required NFT metadata in the "nfts" array)
     2. Create a Token and mint a collection of duplicate NFTs (same image & meta data) to that token ID (Define the "supply" variable as greater than 1 to depict the number of duplicates).
     3. Create a Token and mint a collection of duplicate NFTs (different image, same meta data) to that token ID (Define the "autoSupply" and "autoSupplyStart" to depict the number of nfts). 
-       Images should all be prefixed with their serial number (e.g. #001-file.png") in the "mediaPath" directory, and the corresponding image file in the "nft" meta should just be the suffix (e.g. "-file.png")
+       Images should all be prefixed with their serial number (e.g. "01-file.png") in the "mediaPath" directory, and the corresponding image file in the "nft" meta should just be the suffix (e.g. "-file.png")
     4. Update an existing Token (by supplying the "existingCollectionId") with more NFTs (i.e. increase the supply) using any of the above variations.
 
     Default: 
@@ -131,9 +130,6 @@ async function main(){
 
     // CREATE NFTs IN COLLECTION
     await createNFTs(client, collectionId);
-
-    // EXIT SCRIPT
-    process.exit();
 }
 
 //ADD CUSTOM FEES (AS DEFINED IN FEES ABOVE)
@@ -197,7 +193,7 @@ async function createNFTCollection(client, nftCustomFees){
     if(!client) return -1;
 
     // ENSURE WE HAVE THE REQUIRED KEYS SETUP IN THE ENV FILE
-    if(!process.env.ADMIN_KEY && !process.env.SUPPLY_KEY && !process.env.PAUSE_KEY && !process.env.FREEZE_KEY && !process.env.WIPE_KEY) throw(error("createNFTCollection(): SUPPLY_KEY in your env file must be provided where all other keys blank."));
+    if(!process.env.ADMIN_KEY && !process.env.SUPPLY_KEY && !process.env.PAUSE_KEY && !process.env.FREEZE_KEY && !process.env.WIPE_KEY) throw new Error("createNFTCollection(): SUPPLY_KEY in your env file must be provided where all other keys blank.");
 
     try {
  
@@ -317,6 +313,12 @@ async function createNFTs(client, collectionId){
                         // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
                         let metadata = await Storage.storeAssets(creator, mediaPath, nft, index)
 
+                        // SKIP MINTING WHERE THE IPFS UPLOAD FAILED
+                        if(!metadata){
+                            console.log('Skipping mint for serial prefix ' + index + ' as the IPFS upload failed.\n');
+                            continue;
+                        }
+
                         // MINT TOKEN USING METADATA & COLLECTION ID
                         let tokenReceipt = await mintToken(metadata, client, collectionId);
                     }
@@ -325,6 +327,12 @@ async function createNFTs(client, collectionId){
 
                     // CREATE METADATA (INCL. FILE UPLOAD TO IPFS)
                     let metadata = await Storage.storeAssets(creator, mediaPath, nft)
+
+                    // SKIP MINTING WHERE THE IPFS UPLOAD FAILED
+                    if(!metadata){
+                        console.log('Skipping mint for ' + nft.name + ' as the IPFS upload failed.\n');
+                        return;
+                    }
 
                     // CREATE SUPPLY FOR NFTS (i.e. DUPLICATES)
                     for (let index = 0; index < supply; index++) {
@@ -385,4 +393,7 @@ async function mintToken(metadata, client, tokenId) {
     }
 }
 
-main().catch((error)=>{console.log(error);});
+//Execute Script (& Log Errors), then exit to prevent the terminal locking upon completion
+main()
+    .then(() => process.exit(0))
+    .catch((error) => { console.log(error); process.exit(1); });

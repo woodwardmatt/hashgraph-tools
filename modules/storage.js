@@ -22,7 +22,7 @@ export class Storage{
         if(serial > 0){
 
             //Convert int to string
-            prefix = serial.toString();;
+            prefix = serial.toString();
 
             //Pad string with leading zeros
             prefix = String(prefix).padStart(2, '0');
@@ -60,40 +60,31 @@ export class Storage{
             return "ipfs://" + cid;
 
         } catch (error) {
-            console.log(error)
+
+            //Report the failure and return no metadata URL (so no NFT is minted)
+            console.log('IPFS upload failed for ' + nft.image + ': ' + (error.message || error));
+            return null;
         }
     }
 
     static async storeJSON(metadata){
 
-        try {
+        //Upload metadata to Pinata (errors are handled by storeAssets)
+        const upload = await pinata.upload.json(metadata);
 
-            //Upload metadata to Pinata
-            const upload = await pinata.upload.json(metadata);
-
-            //Output CID (Note: No leading IPFS://)
-            return upload.IpfsHash;
-            
-        } catch (error) {
-            console.log(error)
-        }
+        //Output CID (Note: No leading IPFS://)
+        return upload.IpfsHash;
     }
 
     static async storeFile(blob, nft){
 
-        try {
-            
-            //Create file object to upload to Pinata
-            const file = new File([blob], nft.image, { type: nft.type });
+        //Create file object to upload to Pinata
+        const file = new File([blob], nft.image, { type: nft.type });
 
-            //Upload file to Pinata
-            const upload = await pinata.upload.file(file);
+        //Upload file to Pinata (errors are handled by storeAssets)
+        const upload = await pinata.upload.file(file);
 
-            //Output CID (Note: No leading IPFS://)
-            return upload.IpfsHash;
-
-        } catch (error) {
-            console.log(error)
-        }
+        //Output CID (Note: No leading IPFS://)
+        return upload.IpfsHash;
     }
 }

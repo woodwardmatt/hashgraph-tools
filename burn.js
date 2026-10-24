@@ -58,17 +58,14 @@ async function main(){
         //Verify if we have a batch size we are working with for the burn
         if(batch_size > 0){
 
-            //Loop size is based on batch size plus any offset from the start point
-            loop = batch_size + serial_start;
+            //Loop end (exclusive) is the start point plus the batch size (i.e. exactly batch_size serials)
+            loop = serial_start + batch_size;
 
         }else{
 
-            //Loop size based on supply
-            loop = tokenSupply;
+            //Loop end (exclusive) is based on supply (serial numbers are 1-based, so include the last serial)
+            loop = tokenSupply + 1;
         }
-
-        //Cater for 1-based (not zero-based) serial numbers
-        if (serial_start == 1) loop += 1;
 
         //If all serials, iterate over 1 to Supply value and all to the serials array
         for (let index = serial_start; index < loop; index++) {
@@ -115,5 +112,7 @@ async function main(){
 
 }
 
-//Execute Script (& Log Errors)
-main().catch((error)=>{console.log(error);})
+//Execute Script (& Log Errors), then exit to prevent the terminal locking upon completion
+main()
+    .then(() => process.exit(0))
+    .catch((error) => { console.log(error); process.exit(1); });

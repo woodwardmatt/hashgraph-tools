@@ -12,7 +12,7 @@ async function main(){
     console.log('*****************************************');
 
     //Iterate over the array and generate keys for each item
-    asyncForEach(keys, async (key) => {
+    await asyncForEach(keys, async (key) => {
         
         //Title
         console.log('*****************************************');
@@ -46,4 +46,7 @@ async function asyncForEach(array, callback) {
     }
   }
 
-main();
+//Execute Script (& Log Errors), then exit to prevent the terminal locking upon completion
+main()
+    .then(() => process.exit(0))
+    .catch((error) => { console.log(error); process.exit(1); });

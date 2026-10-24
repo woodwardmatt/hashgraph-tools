@@ -9,7 +9,7 @@ async function main(){
     let client = new Connection().client;
 
     //Set the max transaction fee the client is willing to pay to 2 hbars
-    client.setMaxTransactionFee(new Hbar(2));
+    client.setDefaultMaxTransactionFee(new Hbar(2));
 
     //Setup Account for Updating
     const editAccount = AccountId.fromString(process.env.ACCOUNT_ID);
@@ -30,7 +30,7 @@ async function main(){
     //Create the transaction to update the key on the account
     const transaction = await new AccountUpdateTransaction()
         .setAccountId(editAccount)
-        .setKey(privateKey)
+        .setKey(publicKey)
         .freezeWith(client);
 
     //Sign the transaction with the old key and new key
@@ -50,4 +50,7 @@ async function main(){
 
 }
 
-main();
+//Execute Script (& Log Errors), then exit to prevent the terminal locking upon completion
+main()
+    .then(() => process.exit(0))
+    .catch((error) => { console.log(error); process.exit(1); });

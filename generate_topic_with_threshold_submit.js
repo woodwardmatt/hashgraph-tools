@@ -66,4 +66,7 @@ async function main(){
     console.log("The new topic ID is " + topicId);
 }
 
-main();
+//Execute Script (& Log Errors), then exit to prevent the terminal locking upon completion
+main()
+    .then(() => process.exit(0))
+    .catch((error) => { console.log(error); process.exit(1); });
