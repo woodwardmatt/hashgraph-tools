@@ -2,7 +2,7 @@
   "name": "hashgraph-tools",
   "version": "0.1",
   "description": "",
-  "main": "mint.js",
+  "main": "scripts/mint.js",
   "type": "module",
   "dependencies": {
     "@hashgraph/sdk": "^2.81.0",
@@ -10,18 +10,18 @@
     "pinata": "^2.5.6"
   },
   "scripts": {
-    "start": "node -r dotenv/config mint.js",
-    "mint": "node -r dotenv/config mint.js",
-    "burn": "node -r dotenv/config burn.js",
-    "generate-accounts": "node -r dotenv/config generate_accounts.js",
-    "generate-keys": "node generate_keys.js",
-    "generate-token-threshold": "node -r dotenv/config generate_token_with_threshold_keys.js",
-    "generate-topic-single": "node -r dotenv/config generate_topic_with_single_submit.js",
-    "generate-topic-threshold": "node -r dotenv/config generate_topic_with_threshold_submit.js",
-    "account-key-reset": "node -r dotenv/config account_key_reset.js",
-    "account-key-threshold": "node -r dotenv/config account_key_to_threshold_key.js",
-    "token-key-reset": "node -r dotenv/config token_key_reset.js",
-    "token-grant-kyc": "node -r dotenv/config token_grant_kyc.js"
+    "start": "node -r dotenv/config scripts/mint.js",
+    "mint": "node -r dotenv/config scripts/mint.js",
+    "burn": "node -r dotenv/config scripts/burn.js",
+    "generate-accounts": "node -r dotenv/config scripts/generate_accounts.js",
+    "generate-keys": "node scripts/generate_keys.js",
+    "generate-token-threshold": "node -r dotenv/config scripts/generate_token_with_threshold_keys.js",
+    "generate-topic-single": "node -r dotenv/config scripts/generate_topic_with_single_submit.js",
+    "generate-topic-threshold": "node -r dotenv/config scripts/generate_topic_with_threshold_submit.js",
+    "account-key-reset": "node -r dotenv/config scripts/account_key_reset.js",
+    "account-key-threshold": "node -r dotenv/config scripts/account_key_to_threshold_key.js",
+    "token-key-reset": "node -r dotenv/config scripts/token_key_reset.js",
+    "token-grant-kyc": "node -r dotenv/config scripts/token_grant_kyc.js"
   },
   "overrides": {
     "@grpc/grpc-js": "^1.14.6",

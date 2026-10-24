@@ -3,7 +3,7 @@ This transaction creates a new HCS topic, where messages can only be submitted b
 ## Requirements
 The following will be required:
 - You will need an operator account to pay for the topic creation (account ID and private key) - *update `OPERATOR_ID` and `OPERATOR_KEY` in the .env file with this info*
-- You will need the public key that can submit messages - *paste this into generate_topic_with_single_submit.js where it says `<Insert DER-Encoded Public Key>`*
+- You will need the public key that can submit messages - *paste this into scripts/generate_topic_with_single_submit.js where it says `<Insert DER-Encoded Public Key>`*
 - This code runs under Node JS (and has the `npm run generate-topic-single` script command already configured)
 
 ## Getting Started

@@ -1,7 +1,7 @@
 // Import classes etc.
-import { Connection } from "./modules/connection.js";
-import { Keys } from "./modules/keys.js";
-import { TopicCreateTransaction, PublicKey } from "@hashgraph/sdk";
+import { Connection } from "../modules/connection.js";
+import { Keys } from "../modules/keys.js";
+import { TopicCreateTransaction, KeyList, PublicKey } from "@hashgraph/sdk";
 
 async function main(){
 
@@ -31,13 +31,23 @@ async function main(){
     console.log('New EVM Address: ' + EVMAddress);                         
     console.log('');      
 
-    // Add Key
-    const submitKey = PublicKey.fromString('<Insert DER-Encoded Public Key>');
- 
+    // Add Keys for Multisig (based on 3 accounts)
+    const publicKey1 = PublicKey.fromString('<Insert DER-Encoded Public Key>');
+    const publicKey2 = PublicKey.fromString('<Insert DER-Encoded Public Key>');
+    const publicKey3 = PublicKey.fromString('<Insert DER-Encoded Public Key>');
+
+    // Create a `KeyList` that represents a 1 of 3 multisig threshold
+    const multisigPublicKeys = [publicKey1, publicKey2, publicKey3];
+    const multisigKeyList = new KeyList(multisigPublicKeys, 1);
+
+    //Log Keys (**Only visual output at this stage**)
+    console.log('These are your new credentials...');
+    console.log('Multisig Keylist ' + multisigKeyList.toString());    
+        
     // Create the Topic
     let transaction = new TopicCreateTransaction()
         .setAdminKey(publicKey)
-        .setSubmitKey(submitKey)
+        .setSubmitKey(multisigKeyList)
         .freezeWith(client);
 
     //Sign the transaction with the admin key

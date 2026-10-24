@@ -1,21 +1,21 @@
 This transaction will burn either all serials for an NFT (optionally from a given serial onwards), or just the serials you specify.
 
-> **Behaviour change:** burn.js now continues automatically, batch after batch, until every matching serial is burnt. Previous versions burnt a single batch per run, and you had to update `serial_start` and re-run for the next batch. To keep the previous behaviour, set `max_batches = 1` - re-running the script then picks up the remaining serials automatically.
+> **Behaviour change:** scripts/burn.js now continues automatically, batch after batch, until every matching serial is burnt. Previous versions burnt a single batch per run, and you had to update `serial_start` and re-run for the next batch. To keep the previous behaviour, set `max_batches = 1` - re-running the script then picks up the remaining serials automatically.
 
 ## Requirements
 The following will be required:
 - You will need an operator account to pay for the burn transaction (account ID and private key) - *update the .env file with this info*
-- You will need the token details of the token to burn (token ID and supply key) - *update the token ID in burn.js, and the supply key in the .env file*
+- You will need the token details of the token to burn (token ID and supply key) - *update the token ID in scripts/burn.js, and the supply key in the .env file*
 - This code runs under Node JS (and has the `npm run burn` script command already configured)
 
 ## Getting Started
 To use the Token Burn script:
 - Copy `.env.example` to `.env` (if you haven't already) and fill in your operator account and supply key
-- Update the settings in the "EDIT ZONE" at the top of burn.js (see below)
+- Update the settings in the "EDIT ZONE" at the top of scripts/burn.js (see below)
 - Run `npm run burn`
 
 ## Settings
-The following settings are found in the "EDIT ZONE" at the top of burn.js:
+The following settings are found in the "EDIT ZONE" at the top of scripts/burn.js:
 
 | Setting | Description |
 |---|---|

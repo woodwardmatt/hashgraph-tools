@@ -3,7 +3,7 @@ This transaction creates a new HCS topic, where messages can be submitted by any
 ## Requirements
 The following will be required:
 - You will need an operator account to pay for the topic creation (account ID and private key) - *update `OPERATOR_ID` and `OPERATOR_KEY` in the .env file with this info*
-- You will need the three public keys that can submit messages - *paste these into generate_topic_with_threshold_submit.js where it says `<Insert DER-Encoded Public Key>`*
+- You will need the three public keys that can submit messages - *paste these into scripts/generate_topic_with_threshold_submit.js where it says `<Insert DER-Encoded Public Key>`*
 - This code runs under Node JS (and has the `npm run generate-topic-threshold` script command already configured)
 
 ## Getting Started

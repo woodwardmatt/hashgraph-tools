@@ -1,7 +1,7 @@
 // Import classes etc.
-import { Connection } from "./modules/connection.js";
-import { Keys } from "./modules/keys.js";
-import { Mirror } from "./modules/mirror.js";
+import { Connection } from "../modules/connection.js";
+import { Keys } from "../modules/keys.js";
+import { Mirror } from "../modules/mirror.js";
 import { TokenBurnTransaction, TokenId, TokenInfoQuery } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********

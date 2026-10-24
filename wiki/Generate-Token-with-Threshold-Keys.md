@@ -3,7 +3,7 @@ This transaction creates a new HTS (fungible) token, where the token's admin and
 ## Requirements
 The following will be required:
 - You will need an operator account to pay for the token creation (account ID and private key) - *update `OPERATOR_ID` and `OPERATOR_KEY` in the .env file with this info*
-- You will need the three private keys that will make up the threshold key - *paste these into generate_token_with_threshold_keys.js where it says `<Insert Private Key Here (DER or hex)>`. The [Generate Keys](https://github.com/woodwardmatt/hashgraph-tools/wiki/Generate-Keys) script can create these for you.*
+- You will need the three private keys that will make up the threshold key - *paste these into scripts/generate_token_with_threshold_keys.js where it says `<Insert Private Key Here (DER or hex)>`. The [Generate Keys](https://github.com/woodwardmatt/hashgraph-tools/wiki/Generate-Keys) script can create these for you.*
 - You will need the token details - *update the token name, symbol and treasury account ID in the script where it says `<Insert Token Name>`, `<Insert Token Symbol>` and `<Insert Treasury Account ID>`*
 - This code runs under Node JS (and has the `npm run generate-token-threshold` script command already configured)
 

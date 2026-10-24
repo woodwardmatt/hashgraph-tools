@@ -1,5 +1,5 @@
 // Import classes etc.
-import { Keys } from "./modules/keys.js";
+import { Keys } from "../modules/keys.js";
 
 async function main(){
 

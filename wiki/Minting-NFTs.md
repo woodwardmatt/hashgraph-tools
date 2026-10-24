@@ -16,13 +16,13 @@ The following will be required:
 
 ## Getting Started
 To use the Mint script:
-- Update the settings in the "EDIT ZONE" at the top of mint.js (see below)
-- Run `npm run mint` (or `npm start`, which also runs mint.js)
+- Update the settings in the "EDIT ZONE" at the top of scripts/mint.js (see below)
+- Run `npm run mint` (or `npm start`, which also runs scripts/mint.js)
 
 The following YouTube video playlist has been created to support walking you through these scripts: https://www.youtube.com/playlist?list=PL0P3qsr1eNTfrWrm7atE1QYsUBZBUNwZZ
 
 ## Settings
-The following settings are found in the "EDIT ZONE" at the top of mint.js:
+The following settings are found in the "EDIT ZONE" at the top of scripts/mint.js:
 
 | Setting | Description |
 |---|---|

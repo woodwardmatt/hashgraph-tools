@@ -4,7 +4,7 @@ This transaction updates an account's key to a 3 of 3 threshold key, making it a
 The following will be required:
 - You will need an operator account to pay for the update transaction (account ID and private key) - *update `OPERATOR_ID` and `OPERATOR_KEY` in the .env file with this info*
 - You will need the account details of the account to update (account ID and current private key) - *update `ACCOUNT_ID` and `PRIVATE_KEY` in the .env file with this info*
-- You will need the three private keys that will make up the threshold key - *paste these into account_key_to_threshold_key.js where it says `<Insert Private Key Here (DER or hex)>`. The [Generate Keys](https://github.com/woodwardmatt/hashgraph-tools/wiki/Generate-Keys) script can create these for you.*
+- You will need the three private keys that will make up the threshold key - *paste these into scripts/account_key_to_threshold_key.js where it says `<Insert Private Key Here (DER or hex)>`. The [Generate Keys](https://github.com/woodwardmatt/hashgraph-tools/wiki/Generate-Keys) script can create these for you.*
 - This code runs under Node JS (and has the `npm run account-key-threshold` script command already configured)
 
 ## Getting Started

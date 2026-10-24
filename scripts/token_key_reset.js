@@ -1,6 +1,6 @@
 // Import classes etc.
-import { Connection } from "./modules/connection.js";
-import { Keys } from "./modules/keys.js";
+import { Connection } from "../modules/connection.js";
+import { Keys } from "../modules/keys.js";
 import { TokenUpdateTransaction } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********

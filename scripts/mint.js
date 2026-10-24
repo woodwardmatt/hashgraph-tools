@@ -1,7 +1,7 @@
 // Import classes etc.
-import { Connection } from "./modules/connection.js";
-import { Keys } from "./modules/keys.js";
-import { Storage } from "./modules/storage.js";
+import { Connection } from "../modules/connection.js";
+import { Keys } from "../modules/keys.js";
+import { Storage } from "../modules/storage.js";
 import { AccountId, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
