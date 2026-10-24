@@ -13,7 +13,7 @@ async function main(){
 
     //Setup Account for Updating
     const editAccount = AccountId.fromString(process.env.ACCOUNT_ID);
-    const editKey = PrivateKey.fromString(process.env.PRIVATE_KEY);
+    const editKey = Keys.fromEnv("PRIVATE_KEY");
 
     //Generate New Key Pair
     let keys = Keys.generateKeys();

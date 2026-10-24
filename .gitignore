@@ -1,2 +1,4 @@
-#Ignore Modules
 node_modules
+
+#Ignore Local Environment (secrets)
+.env

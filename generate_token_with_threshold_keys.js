@@ -1,6 +1,7 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
-import { Hbar,TokenCreateTransaction,KeyList,PrivateKey } from "@hashgraph/sdk";
+import { Keys } from "./modules/keys.js";
+import { Hbar,TokenCreateTransaction,KeyList } from "@hashgraph/sdk";
 
 async function main(){
 
@@ -8,9 +9,10 @@ async function main(){
     let client = new Connection().client;     
 
     // Add Keys for Multisig (based on 3 accounts)
-    const privateKey1 = PrivateKey.fromStringECDSA('<Insert HEX-encoded Private Key String Here>');
-    const privateKey2 = PrivateKey.fromStringECDSA('<Insert HEX-encoded Private Key String Here>');
-    const privateKey3 = PrivateKey.fromStringECDSA('<Insert HEX-encoded Private Key String Here>');
+    // Note: DER keys are detected automatically. For raw hex ED25519 keys, change 'ECDSA' to 'ED25519'
+    const privateKey1 = Keys.parsePrivateKey('<Insert Private Key Here (DER or hex)>', 'ECDSA');
+    const privateKey2 = Keys.parsePrivateKey('<Insert Private Key Here (DER or hex)>', 'ECDSA');
+    const privateKey3 = Keys.parsePrivateKey('<Insert Private Key Here (DER or hex)>', 'ECDSA');
 
     // Create a `KeyList` that represents a 3 of 3 multisig threshold
     const multisigPublicKeys = [(await privateKey1).publicKey, (await privateKey2).publicKey, (await privateKey3).publicKey];

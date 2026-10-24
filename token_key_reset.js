@@ -1,6 +1,7 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
-import { PrivateKey, TokenUpdateTransaction } from "@hashgraph/sdk";
+import { Keys } from "./modules/keys.js";
+import { TokenUpdateTransaction } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 let tokenId = "0.0.34812767";
@@ -14,14 +15,14 @@ async function main(){
     //Create the transaction and freeze for manual signing
     const transaction = await new TokenUpdateTransaction()
         .setTokenId(tokenId)
-        .setSupplyKey(PrivateKey.fromString(process.env.SUPPLY_KEY))
-        .setPauseKey(PrivateKey.fromString(process.env.PAUSE_KEY))
-        .setFreezeKey(PrivateKey.fromString(process.env.FREEZE_KEY))
-        .setWipeKey(PrivateKey.fromString(process.env.WIPE_KEY))
+        .setSupplyKey(Keys.fromEnv("SUPPLY_KEY"))
+        .setPauseKey(Keys.fromEnv("PAUSE_KEY"))
+        .setFreezeKey(Keys.fromEnv("FREEZE_KEY"))
+        .setWipeKey(Keys.fromEnv("WIPE_KEY"))
         .freezeWith(client);
 
     //Sign the transaction with the admin key
-    const signTx = await transaction.sign(PrivateKey.fromString(process.env.ADMIN_KEY));
+    const signTx = await transaction.sign(Keys.fromEnv("ADMIN_KEY"));
 
     //Submit the signed transaction to a Hedera network
     const txResponse = await signTx.execute(client);

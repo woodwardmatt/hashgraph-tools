@@ -1,6 +1,7 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
-import { AccountId, PrivateKey, TokenBurnTransaction, TokenId, TokenInfoQuery } from "@hashgraph/sdk";
+import { Keys } from "./modules/keys.js";
+import { AccountId, TokenBurnTransaction, TokenId, TokenInfoQuery } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 
@@ -88,7 +89,7 @@ async function main(){
                         .freezeWith(client);
 
     //Sign with the supply private key of the token 
-    const signTx = await transaction.sign(PrivateKey.fromString(process.env.SUPPLY_KEY));
+    const signTx = await transaction.sign(Keys.fromEnv("SUPPLY_KEY"));
 
     //Submit the transaction to a Hedera network
     let txResponse = await signTx.execute(client);

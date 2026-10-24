@@ -1,5 +1,6 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
+import { Keys } from "./modules/keys.js";
 import { Storage } from "./modules/storage.js";
 import { AccountId, PrivateKey, Hbar, CustomRoyaltyFee, CustomFixedFee, TokenCreateTransaction, TokenType, TokenSupplyType, TokenInfoQuery, TokenMintTransaction, TokenBurnTransaction, AccountUpdateTransaction, TokenAssociateTransaction, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
 import { error } from "console";
@@ -222,11 +223,11 @@ async function createNFTCollection(client, nftCustomFees){
                 if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setMaxSupply(maxCollectionSupply)
 
                 //Conditionally add keys where they are provided
-                if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(PrivateKey.fromStringECDSA(process.env.ADMIN_KEY))
-                if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setSupplyKey(PrivateKey.fromStringECDSA(process.env.SUPPLY_KEY))
-                if(process.env.PAUSE_KEY) nftCreate = nftCreate.setPauseKey(PrivateKey.fromStringECDSA(process.env.PAUSE_KEY))
-                if(process.env.FREEZE_KEY) nftCreate = nftCreate.setFreezeKey(PrivateKey.fromStringECDSA(process.env.FREEZE_KEY))
-                if(process.env.WIPE_KEY) nftCreate = nftCreate.setWipeKey(PrivateKey.fromStringECDSA(process.env.WIPE_KEY))
+                if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(Keys.fromEnv("ADMIN_KEY"))
+                if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setSupplyKey(Keys.fromEnv("SUPPLY_KEY"))
+                if(process.env.PAUSE_KEY) nftCreate = nftCreate.setPauseKey(Keys.fromEnv("PAUSE_KEY"))
+                if(process.env.FREEZE_KEY) nftCreate = nftCreate.setFreezeKey(Keys.fromEnv("FREEZE_KEY"))
+                if(process.env.WIPE_KEY) nftCreate = nftCreate.setWipeKey(Keys.fromEnv("WIPE_KEY"))
 
                 //Freeze transaction from further modification
                 nftCreate = nftCreate.freezeWith(client);
@@ -246,11 +247,11 @@ async function createNFTCollection(client, nftCustomFees){
                 .setMaxTransactionFee(new Hbar(100));
 
                 //Conditionally add keys where they are provided
-                if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(PrivateKey.fromStringECDSA(process.env.ADMIN_KEY))
-                if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setSupplyKey(PrivateKey.fromStringECDSA(process.env.SUPPLY_KEY))
-                if(process.env.PAUSE_KEY) nftCreate = nftCreate.setPauseKey(PrivateKey.fromStringECDSA(process.env.PAUSE_KEY))
-                if(process.env.FREEZE_KEY) nftCreate = nftCreate.setFreezeKey(PrivateKey.fromStringECDSA(process.env.FREEZE_KEY))
-                if(process.env.WIPE_KEY) nftCreate = nftCreate.setWipeKey(PrivateKey.fromStringECDSA(process.env.WIPE_KEY))
+                if(process.env.ADMIN_KEY) nftCreate = nftCreate.setAdminKey(Keys.fromEnv("ADMIN_KEY"))
+                if(process.env.SUPPLY_KEY) nftCreate = nftCreate.setSupplyKey(Keys.fromEnv("SUPPLY_KEY"))
+                if(process.env.PAUSE_KEY) nftCreate = nftCreate.setPauseKey(Keys.fromEnv("PAUSE_KEY"))
+                if(process.env.FREEZE_KEY) nftCreate = nftCreate.setFreezeKey(Keys.fromEnv("FREEZE_KEY"))
+                if(process.env.WIPE_KEY) nftCreate = nftCreate.setWipeKey(Keys.fromEnv("WIPE_KEY"))
 
                 //Freeze transaction from further modification
                 nftCreate = nftCreate.freezeWith(client);
@@ -261,9 +262,9 @@ async function createNFTCollection(client, nftCustomFees){
 
         //Verify if we need to sign with the admin key too (if supplied)
         if(process.env.ADMIN_KEY){
-            nftCreateTxSign = await(await nftCreate.sign(PrivateKey.fromStringECDSA(process.env.ADMIN_KEY))).sign(PrivateKey.fromStringECDSA(process.env.TREASURY_KEY));
+            nftCreateTxSign = await(await nftCreate.sign(Keys.fromEnv("ADMIN_KEY"))).sign(Keys.fromEnv("TREASURY_KEY"));
         }else{
-            nftCreateTxSign = await nftCreate.sign(PrivateKey.fromStringECDSA(process.env.TREASURY_KEY));
+            nftCreateTxSign = await nftCreate.sign(Keys.fromEnv("TREASURY_KEY"));
         }
 
         let nftCreateSubmit = await nftCreateTxSign.execute(client);
@@ -365,7 +366,7 @@ async function mintToken(metadata, client, tokenId) {
         .setMetadata([Buffer.from(metadata)])
         .freezeWith(client);
     
-        let mintTxSign = await mintTx.sign(PrivateKey.fromStringECDSA(process.env.SUPPLY_KEY));
+        let mintTxSign = await mintTx.sign(Keys.fromEnv("SUPPLY_KEY"));
         let mintTxSubmit = await mintTxSign.execute(client);
         let mintRx = await mintTxSubmit.getReceipt(client);
 
