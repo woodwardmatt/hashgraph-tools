@@ -39,7 +39,7 @@ export class Storage{
             //Debug output
             console.log("Pinata File CID : " + cid)
 
-            //Build Metadata - Ref - HIP 412: https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-412.md
+            //Build Metadata - Ref - HIP 412: https://github.com/hiero-ledger/hiero-improvement-proposals/blob/main/HIP/hip-412.md
             var metadata = {
                 name: nft.name,
                 creator: creator,        

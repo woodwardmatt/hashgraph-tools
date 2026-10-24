@@ -10,6 +10,17 @@
     "pinata-web3": "^0.5.4"
   },
   "scripts": {
-    "start": "node -r dotenv/config mint.js"
+    "start": "node -r dotenv/config mint.js",
+    "mint": "node -r dotenv/config mint.js",
+    "burn": "node -r dotenv/config burn.js",
+    "generate-accounts": "node -r dotenv/config generate_accounts.js",
+    "generate-keys": "node generate_keys.js",
+    "generate-token-threshold": "node -r dotenv/config generate_token_with_threshold_keys.js",
+    "generate-topic-single": "node -r dotenv/config generate_topic_with_single_submit.js",
+    "generate-topic-threshold": "node -r dotenv/config generate_topic_with_threshold_submit.js",
+    "account-key-reset": "node -r dotenv/config account_key_reset.js",
+    "account-key-threshold": "node -r dotenv/config account_key_to_threshold_key.js",
+    "token-key-reset": "node -r dotenv/config token_key_reset.js",
+    "token-grant-kyc": "node -r dotenv/config token_grant_kyc.js"
   }
 }
