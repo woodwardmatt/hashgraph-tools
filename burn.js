@@ -1,19 +1,29 @@
 // Import classes etc.
 import { Connection } from "./modules/connection.js";
 import { Keys } from "./modules/keys.js";
-import { AccountId, TokenBurnTransaction, TokenId, TokenInfoQuery } from "@hashgraph/sdk";
+import { Mirror } from "./modules/mirror.js";
+import { TokenBurnTransaction, TokenId, TokenInfoQuery } from "@hashgraph/sdk";
 
 // ******* START - EDIT ZONE (Only make changes below here) ********
 
 /*
-    Use cases: 
-    1. Burn all tokens for a given Token ID (Recommendation: Define batch_size as less than the current rate limit).
-    2. Burn all tokens for a given Token ID from a given serial number onwards (Recommendation: Define the serial_start, and batch_size variables).
-    3. Burn specific serials numbers for a given Token ID (Recommendation: Define the numbers in the serials array variable).
+    Use cases:
+    1. Burn all tokens for a given Token ID (Recommendation: Leave serial_start as 1).
+    2. Burn all tokens for a given Token ID from a given serial number onwards (Recommendation: Define the serial_start variable).
+    3. Burn specific serials numbers for a given Token ID (Recommendation: Define the numbers in the serials array variable, and set all_serials to false).
 
-    Defaults: 
-    Burn all serials for Token ID "0.0.0000000", starting at serial #1 using a batch size of 10. 
-    Expected result: serials 1 to 10 will be burnt. Automated continuation is currently not supported - you'll need to update serial_start and re-run for the next batch.
+    How it works:
+    Only NFTs held by the token's treasury account can be burnt. The script asks the mirror node which serials
+    the treasury currently holds, and only burns those (so burnt, transferred, or never minted serials are skipped).
+    Serials are burnt highest first, in batches of batch_size.
+
+    BEHAVIOUR CHANGE (previous versions burnt a single batch per run):
+    The script now continues automatically, batch after batch, until every matching serial is burnt.
+    Use max_batches to limit how many batches are burnt per run (e.g. max_batches = 1 burns one batch then stops,
+    as previous versions did). Re-running the script picks up the remaining serials automatically.
+
+    Defaults:
+    Burn all serials held by the treasury for Token ID "0.0.0000000", in batches of 10, with no batch limit.
 */
 
 // Define the Token ID for which we will burn serials
@@ -28,87 +38,108 @@ let serial_start = 1; // Or let serial_start = 11;
 // Define if we are burning all NFTs in the collection
 let all_serials = true; // Or let all_serials = false;
 
-// Work with a batch size for burning (e.g. only burn 10 NFTs at a time based on current rate limiting)
+// Work with a batch size for burning (Hedera allows a maximum of 10 serials per burn transaction)
 let batch_size = 10;
 
+// Limit the number of batches burnt per run (0 = no limit, burn every matching serial)
+let max_batches = 0; // Or let max_batches = 1; (one batch per run)
+
 // ******* END - EDIT ZONE (Only make changes above here) ********
+
+// Hedera limit for the number of serials in a single burn transaction
+const MAX_BATCH_SIZE = 10;
 
 // Entry point for script execution
 async function main(){
 
-    // SETUP CLIENTS 
+    // SETUP CLIENTS
     let client = new Connection().client;
 
-    //Get Token Info
-    let tokenInfo = new TokenInfoQuery()
-                        .setTokenId(tokenId); 
-          
-    //Get Token Supply (and parse as int)
-    var tokenSupply = parseInt((await tokenInfo.execute(client)).totalSupply);
+    //Get Token Info (for the supply, and the treasury account that holds burnable NFTs)
+    let tokenInfo = await new TokenInfoQuery()
+                        .setTokenId(tokenId)
+                        .execute(client);
 
     //Log the total supply
-    console.log("Total Supply (pre Burn): " + tokenSupply);
+    console.log("Total Supply (pre Burn): " + tokenInfo.totalSupply.toString());
 
-    //Verify if we are burning all serials (or just specified numbers)
+    //Get the serials currently held by the treasury (only these can be burnt)
+    const treasuryId = tokenInfo.treasuryAccountId.toString();
+    const treasurySerials = await Mirror.getSerialsHeldBy(tokenId, treasuryId);
+    console.log("Serials held by treasury " + treasuryId + ": " + treasurySerials.length);
+
+    //Work out which serials we'll be burning
+    let toBurn = [];
+
     if(all_serials){
 
-        //Setup variable for burn loop
-        let loop = 0;
+        //All treasury serials from the start point onwards
+        toBurn = treasurySerials.filter((serial) => serial >= serial_start);
 
-        //Verify if we have a batch size we are working with for the burn
-        if(batch_size > 0){
+    }else{
 
-            //Loop end (exclusive) is the start point plus the batch size (i.e. exactly batch_size serials)
-            loop = serial_start + batch_size;
+        //Only the requested serials which the treasury actually holds
+        toBurn = treasurySerials.filter((serial) => serials.includes(serial));
 
-        }else{
-
-            //Loop end (exclusive) is based on supply (serial numbers are 1-based, so include the last serial)
-            loop = tokenSupply + 1;
-        }
-
-        //If all serials, iterate over 1 to Supply value and all to the serials array
-        for (let index = serial_start; index < loop; index++) {
-
-            //Push value to serials array
-            serials.push(index);
-        }   
+        //Let us know about any requested serials that will be skipped
+        const skipped = serials.filter((serial) => !treasurySerials.includes(serial));
+        if(skipped.length > 0) console.log("Skipping serials not held by the treasury (burnt, transferred or never minted): " + skipped.join(", "));
     }
 
+    //Verify we have something to burn
+    if(toBurn.length === 0){
+        console.log("No serials to burn.");
+        return;
+    }
+
+    //Keep the batch size within Hedera's limit
+    const size = (batch_size > 0 && batch_size <= MAX_BATCH_SIZE) ? batch_size : MAX_BATCH_SIZE;
+
+    //Apply the batch limit for this run (if set)
+    const remaining = toBurn.length;
+    if(max_batches > 0) toBurn = toBurn.slice(0, max_batches * size);
+
     //Log Serials we'll be burning
-    console.log("Token Serials to burn:");
-    console.log(serials);
+    console.log("Token Serials to burn (" + toBurn.length + ", highest first, in batches of " + size + "):");
+    console.log(toBurn);
 
-    //Burn tokens and freeze the unsigned transaction for manual signing
-    let transaction = await new TokenBurnTransaction()
-                        .setTokenId(TokenId.fromString(tokenId))
-                        .setSerials(serials)
-                        .freezeWith(client);
+    //Let us know if the batch limit leaves serials for a later run
+    if(toBurn.length < remaining) console.log("Batch limit of " + max_batches + " reached - " + (remaining - toBurn.length) + " serials will remain. Re-run the script to continue.");
 
-    //Sign with the supply private key of the token 
-    const signTx = await transaction.sign(Keys.fromEnv("SUPPLY_KEY"));
+    //Get the supply key once (used to sign every batch)
+    const supplyKey = Keys.fromEnv("SUPPLY_KEY");
 
-    //Submit the transaction to a Hedera network
-    let txResponse = await signTx.execute(client);
+    //Burn each batch in turn
+    for (let index = 0; index < toBurn.length; index += size) {
 
-    //Request the receipt of the transaction
-    let receipt = await txResponse.getReceipt(client);
-        
-    //Get the transaction consensus status
-    let transactionStatus = receipt.status;
+        const batch = toBurn.slice(index, index + size);
 
-    //Log the outcome of the transaction
-    console.log("The transaction consensus status " + transactionStatus.toString());
+        //Burn tokens and freeze the unsigned transaction for manual signing
+        let transaction = new TokenBurnTransaction()
+                            .setTokenId(TokenId.fromString(tokenId))
+                            .setSerials(batch)
+                            .freezeWith(client);
 
-    //Get Token Info (again! as new transaction)
-    tokenInfo = new TokenInfoQuery()
-                        .setTokenId(tokenId); 
+        //Sign with the supply private key of the token
+        const signTx = await transaction.sign(supplyKey);
 
-    //Re-fetch Token Supply (and parse as int)
-    tokenSupply = parseInt((await tokenInfo.execute(client)).totalSupply);
+        //Submit the transaction to a Hedera network
+        let txResponse = await signTx.execute(client);
+
+        //Request the receipt of the transaction
+        let receipt = await txResponse.getReceipt(client);
+
+        //Log the outcome of the batch
+        console.log("Burnt serials [" + batch.join(", ") + "] - status " + receipt.status.toString());
+    }
+
+    //Re-fetch Token Info (as supply has changed)
+    tokenInfo = await new TokenInfoQuery()
+                        .setTokenId(tokenId)
+                        .execute(client);
 
     //Log the total supply after burning
-    console.log("Total Supply (after Burn): " + tokenSupply);    
+    console.log("Total Supply (after Burn): " + tokenInfo.totalSupply.toString());
 
 }
 
